@@ -52,7 +52,14 @@ retrieve = vectorStores.as_retriever()
 
 
 # ----------------------------
-# 5. Prompt Template
+# 5. Format retrieved docs into plain text for the prompt
+# ----------------------------
+def format_docs(docs):
+    return "\n\n".join(doc.page_content for doc in docs)
+
+
+# ----------------------------
+# 6. Prompt Template
 # ----------------------------
 prompt = ChatPromptTemplate.from_template("""
 Answer only using the context.
@@ -66,17 +73,17 @@ Question:
 
 
 # ----------------------------
-# 6. Output Parser
+# 7. Output Parser
 # ----------------------------
 parser = StrOutputParser()
 
 
 # ----------------------------
-# 7. Runnable Chain (retriever -> prompt -> model -> parser)
+# 8. Runnable Chain (retriever -> prompt -> model -> parser)
 # ----------------------------
 chain = (
     RunnableParallel(
-        context=retrieve,
+        context=retrieve | format_docs,
         question=RunnablePassthrough(),
     )
     | prompt
@@ -86,9 +93,15 @@ chain = (
 
 
 # ----------------------------
-# 8. Invoke — ask a question from the terminal
+# 9. Invoke — ask questions from the terminal until user quits
 # ----------------------------
 if __name__ == "__main__":
-    question = input("Ask a question about the PDF: ")
-    answer = chain.invoke(question)
-    print(answer)
+    print("Ask questions about the PDF. Type 'exit' or 'quit' to stop.")
+    while True:
+        question = input("\nQuestion: ").strip()
+        if question.lower() in ("exit", "quit"):
+            break
+        if not question:
+            continue
+        answer = chain.invoke(question)
+        print(f"\nAnswer: {answer}")
