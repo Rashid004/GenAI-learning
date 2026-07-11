@@ -22,7 +22,7 @@ vector_store = FAISS.from_documents(documents=docs, embedding=embedding)
 
 vector_retriever = vector_store.as_retriever(
   search_type="mmr",  # <-- This enables MMR
-  search_kwargs={"k": 3, "lambda_mult": 0.5}  # k = top results, lambda_mult = relevance-diversity balance
+  search_kwargs={"k": 2, "lambda_mult": 0.5}  # k = top results, lambda_mult = relevance-diversity balance
   )
 
 query = "What is LangChain?"

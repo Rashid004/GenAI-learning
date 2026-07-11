@@ -59,7 +59,7 @@ def format_docs(docs):
 
 
 # ----------------------------
-# 6. Prompt Template
+# 6. Prompt Template 
 # ----------------------------
 prompt = ChatPromptTemplate.from_template("""
 Answer only using the context.
